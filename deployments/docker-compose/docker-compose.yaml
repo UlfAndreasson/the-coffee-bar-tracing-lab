@@ -31,7 +31,8 @@ services:
 #    expose:
 #      - 9222
   the-coffee-bar:
-    image: sumo/the-coffee-bar-app:python-apps-1.5.0-0.24b0
+    #image: sumo/the-coffee-bar-app:python-apps
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:python-apps
     container_name: the-coffee-bar
     hostname: the-coffee-bar
     ports:
@@ -48,7 +49,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=the-coffee-bar
       - OTEL_PROPAGATORS=xray,tracecontext,baggage
   the-coffee-bar-frontend:
-    image: sumo/the-coffee-bar-app:frontend-js-0.24.0
+    #image: sumo/the-coffee-bar-app:frontend-js
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:frontend-js
     container_name: the-coffee-bar-frontend
     hostname: the-coffee-bar-frontend
     ports:
@@ -65,13 +67,14 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_COFFEE_BAR_URL=http://localhost:8082/order
       - REACT_APP_SERVICE_NAME=the-coffee-bar-frontend
-      - REACT_APP_SUMO_OT_JS_URL=
-      - REACT_APP_COLLECTION_SOURCE_URL=
+      #- REACT_APP_SUMO_OT_JS_URL=
+      - REACT_APP_COLLECTION_SOURCE_URL=https://rum-collectors.us2.sumologic.com/receiver/v1/trace/ZaVnC4dhaV3b3tyMzt3_aukufAKFTBYVkxoXY-rUbCajbI4WVhCWVMIo573UmeRM9FfQwQ_ek7qucKCAdEqqFDtNId6G5dqojhrjKAlQUATEUWw3mOhRTA==
       - REACT_APP_APPLICATION_NAME=tcb-local
       - REACT_APP_DEFAULT_ATTRIBUTES={"testKey":"testValue","testListKey":["1"]}
       - REACT_APP_PROPAGATION_CORS_URLS=[/^http:\/\/localhost:8082\/.*/,/^http:\/\/the-coffee-bar:8082\/.*/,]
   the-coffee-machine:
-    image: sumo/the-coffee-bar-app:python-apps-1.5.0-0.24b0
+    #image: sumo/the-coffee-bar-app:python-apps
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:python-apps
     container_name: the-coffee-machine
     hostname: the-coffee-machine
     ports:
@@ -84,7 +87,8 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317
       - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=the-coffee-machine
   the-cashdesk:
-    image: sumo/the-coffee-bar-app:python-apps-1.5.0-0.24b0
+    #image: sumo/the-coffee-bar-app:python-apps
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:python-apps
     container_name: the-cashdesk
     hostname: the-cashdesk
     ports:
@@ -96,18 +100,19 @@ services:
       - OTEL_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317
       - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=the-cashdesk
-  the-coffee-lover:
-    image: sumo/the-coffee-bar-app:python-apps-1.5.0-0.24b0
-    container_name: the-coffee-lover
-    hostname: the-coffee-lover
-    command: ["opentelemetry-instrument", "python3", "src/bin/the_coffee_lover.py",
-              "--host=the-coffee-bar", "--port=8082", "--ratio=1"]
-    environment:
-      - OTEL_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317
-      - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=the-coffee-lover
+  #the-coffee-lover:
+  #  image: sumo/the-coffee-bar-app:python-apps
+  #  container_name: the-coffee-lover
+  #  hostname: the-coffee-lover
+  #  command: ["opentelemetry-instrument", "python3", "src/bin/the_coffee_lover.py",
+  #            "--host=the-coffee-bar", "--port=8082", "--ratio=1"]
+  #  environment:
+  #    - OTEL_EXPORTER=otlp
+  #    - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317
+  #    - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=the-coffee-lover
   machine-svc:
-    image: sumo/the-coffee-bar-app:ruby-apps-1.0.0-0.21.3-0.20.5
+    #image: sumo/the-coffee-bar-app:ruby-apps
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:ruby-apps
     container_name: machine-svc
     hostname: machine-svc
     ports:
@@ -118,7 +123,8 @@ services:
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=machine-svc
   coffee-svc:
-    image: sumo/the-coffee-bar-app:ruby-apps-1.0.0-0.21.3-0.20.5
+    #image: sumo/the-coffee-bar-app:ruby-apps
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:ruby-apps
     container_name: coffee-svc
     hostname: coffee-svc
     ports:
@@ -129,7 +135,8 @@ services:
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=coffee-svc
   water-svc:
-    image: sumo/the-coffee-bar-app:ruby-apps-1.0.0-0.21.3-0.20.5
+    #image: sumo/the-coffee-bar-app:ruby-apps
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:ruby-apps
     container_name: water-svc
     hostname: water-svc
     ports:
@@ -141,7 +148,8 @@ services:
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=application=tcb-local,service.name=water-svc
   calculator-svc:
-    image: sumo/the-coffee-bar-app:calculator-dotnet-1.1.0-1.0.0rc7
+    #image: sumo/the-coffee-bar-app:calculator-dotnet
+    image: 131959189120.dkr.ecr.us-west-2.amazonaws.com/the-coffee-bar:calculator-dotnet
     container_name: calculator-svc
     hostname: calculator-svc
     command: ["dotnet", "dotnet-core-calculator-svc.dll", "http://calculator-svc:8090"]
