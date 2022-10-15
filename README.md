@@ -1,6 +1,8 @@
 # The Coffee Bar App 
 The demo application instrumented by [OpenTelemetry] framework.
 
+## --------------------------------------------------------------
+
 ## Content
 * `deployments` directory contains specific deployments templates files
 * `applications` directory contains sources of the application

@@ -1,0 +1,278 @@
+# Default values for sumologic.thecoffeebar.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  dotnet:
+    repository: 246946804217.dkr.ecr.us-west-2.amazonaws.com/tracing-demo-java/tracing-demo-java
+    tag: calculator-dotnet-1.1.0-1.0.0rc7
+  frontend:
+    repository: 246946804217.dkr.ecr.us-west-2.amazonaws.com/tracing-demo-java/tracing-demo-java
+    tag: frontend-js-0.18.2-1
+  python:
+    repository: 246946804217.dkr.ecr.us-west-2.amazonaws.com/tracing-demo-java/tracing-demo-java
+    tag: python-apps-1.5.0-0.24b0
+  ruby:
+    repository: 246946804217.dkr.ecr.us-west-2.amazonaws.com/tracing-demo-java/tracing-demo-java
+    tag: ruby-apps-1.0.0rc3-0.20.1-0.20.3
+  clicker:
+    repository: 246946804217.dkr.ecr.us-west-2.amazonaws.com/tracing-demo-java/tracing-demo-java
+    tag: clicker-linux
+  postgres:
+    repository: postgres
+    tag: 9.6.2-alpine
+
+  pullPolicy: Always
+
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  ## Required to run browsers in headless mode
+  clicker:
+    capabilities:
+      add:
+        - SYS_ADMIN
+  ## Required to run CPU Killer/Network Delay
+  frontend:
+    capabilities:
+      add:
+        - SYS_ADMIN
+        - NET_ADMIN
+  common: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  frontend:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 768Mi
+  python:
+    common:
+      requests:
+        cpu: 100m
+        memory: 50Mi
+      limits:
+        cpu: 250m
+        memory: 400Mi
+  ruby:
+    common:
+      requests:
+        cpu: 100m
+        memory: 50Mi
+      limits:
+        cpu: 250m
+        memory: 250Mi
+  calculatorsvc:
+    common:
+      requests:
+        cpu: 100m
+        memory: 50Mi
+      limits:
+        cpu: 250m
+        memory: 500Mi
+  clicker:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+
+healthChecks:
+  calculator:
+    livenessProbe:
+      enabled: false
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep dotnet | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+    readinessProbe:
+      enabled: true
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep dotnet | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+  clicker:
+    livenessProbe:
+      enabled: false
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep node | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+    readinessProbe:
+      enabled: true
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep node | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+  frontend:
+    livenessProbe:
+      enabled: false
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep npm | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+    readinessProbe:
+        enabled: true
+        exec:
+          command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep npm | grep -v grep
+        periodSeconds: 5
+        initialDelaySeconds: 15
+  pythonApps:
+    livenessProbe:
+      enabled: true
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep python | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+    readinessProbe:
+      enabled: true
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep python | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+  rubyApps:
+    livenessProbe:
+      enabled: false
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep ruby | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+    readinessProbe:
+      enabled: true
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - -e
+          - |
+            ps aux | grep ruby | grep -v grep
+      periodSeconds: 5
+      initialDelaySeconds: 15
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+envs:
+  bar:
+    OTEL_RESOURCE_ATTRIBUTES: "service.name=the-coffee-bar,application=the-coffee-bar-app"
+    OTEL_PROPAGATORS: "xray,tracecontext,baggage"
+  calculatorsvc:
+    OTEL_RESOURCE_ATTRIBUTES: "service.name=calculator-svc,application=the-coffee-bar-app"
+  cashdesk:
+    OTEL_RESOURCE_ATTRIBUTES: "service.name=the-cashdesk,application=the-coffee-bar-app"
+  clicker:
+    DELAY: "5"
+  coffeemachine:
+    OTEL_RESOURCE_ATTRIBUTES: "service.name=the-coffee-machine,application=the-coffee-bar-app"
+  coffeesvc:
+    OTEL_RESOURCE_ATTRIBUTES: "service.name=coffee-svc,application=the-coffee-bar-app,k8s.pod.ip=$(MY_POD_IP)"
+  frontend:
+    REACT_APP_SUMO_OT_JS_URL: "https://cdn-service.us2.sumologic.com/ui/js/thirdparty/sumologic-opentelemetry.js"
+    #REACT_APP_SUMO_OT_JS_URL: "https://cdn-service.sumologic.com/ui/js/thirdparty/sumologic-opentelemetry.js"
+    REACT_APP_SERVICE_NAME: "the-coffee-bar-frontend"
+    REACT_APP_APPLICATION_NAME: "the-coffee-bar-app"
+    ## Envs to configure CPU Killer and Network Delay
+    INTERVAL: "60" # Run every 60 minutes
+    DURATION: "5" # for 5 minutes
+    THREADS_NO: "475" # on 475 threads
+    NETWORK_DELAY: "1" # with 1 second network delay
+  machinesvc:
+    OTEL_RESOURCE_ATTRIBUTES: "service.name=machine-svc,application=the-coffee-bar-app,k8s.pod.ip=$(MY_POD_IP)"
+  postgres:
+    POSTGRES_HOST_AUTH_METHOD: trust
+  watersvc:
+    OTEL_RESOURCE_ATTRIBUTES: "service.name=water-svc,application=the-coffee-bar-app,k8s.pod.ip=$(MY_POD_IP)"
+
+extras:
+  otelColHostName: collection-sumologic-otelcol.sumologic
+  lambdaSweetsUrl:
+  rumColSourceUrl:
